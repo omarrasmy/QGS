@@ -1,6 +1,5 @@
 const Instructor = require('../models/instructorAccount')
-const {SendWelcomMessage,CancelationMail}=require('../mails/sendMails')
-const Admin=require('../models/AdminAccount')
+const {CancelationMail}=require('../mails/sendMails')
 const multer=require('multer')
 
 
@@ -9,6 +8,7 @@ exports.Login=async(req,res)=>{
 
     try{
       const instructor=await Instructor.findByCredentials(req.body.Email,req.body.Password)
+      
     
       if(instructor.accepted===true){
       const token = await instructor.GenerateTokens()
@@ -16,7 +16,7 @@ exports.Login=async(req,res)=>{
       }
       res.send('wait untill receving gmail confrimation mail')
     }catch(e){
-        res.status(400).send(e)
+        res.status(404).send(e)
     }
 
 }

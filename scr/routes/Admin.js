@@ -1,6 +1,7 @@
 const express=require('express')
 const AdminAuth=require('../middleware/Auth')
 const AdminController=require('../Controllers/admin')
+const instructorController=require('../Controllers/instructor')
 
 const router= new express.Router()
 
@@ -37,6 +38,13 @@ router.post('/admin/singuprequests/:id/reject',AdminAuth.AdminAuth,AdminControll
 //send mail when adding new domain (pending) -push notification service-
 
 //edit QB(pending)
+
+//fetch pic on web 
+router.get('/admin/:id/pic',AdminController.fetcProfilePicture)
+
+//upload image
+router.post('/admin/upload/profilePicture',AdminAuth.AdminAuth,instructorController.image.single('image'),AdminController.UploadProfilePicture)
+
 
 
 

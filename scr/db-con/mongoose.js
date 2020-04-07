@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
-console.log(process.env.MONGO_URL)
-mongoose.connect('mongodb://localhost/Question-Generation-System',
+
+mongoose.connect(process.env.MONGO_URL_CONNECTION,
 {useNewUrlParser: true, 
     useUnifiedTopology:true,
     useCreateIndex:true,
-useFindAndModify:false}
+   useFindAndModify:false}
 )

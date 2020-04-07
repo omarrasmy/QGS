@@ -87,7 +87,7 @@ InstructorSchema.methods.toJSON= function(){
 }
 InstructorSchema.methods.GenerateTokens= async function(){
     const instructor=this
-     const token= await jwt.sign({_id: instructor._id.toString()},'seckey')
+     const token= await jwt.sign({_id: instructor._id.toString()},process.env.JWTSEC)
      instructor.tokens=instructor.tokens.concat({token})
      await instructor.save()
      return token

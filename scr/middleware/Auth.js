@@ -5,7 +5,7 @@ const Admin = require('../models/AdminAccount')
 const Auth=async(req,res,next)=>{
     try{
         const token= req.header('Authorization').replace('Bearer ','')
-        const decoded= jwt.verify(token,'seckey')
+        const decoded= jwt.verify(token,process.env.JWTSEC)
         const instructor = await Instructor.findOne({_id:decoded._id,'tokens.token':token})
         
         if(!instructor){
@@ -25,7 +25,7 @@ const Auth=async(req,res,next)=>{
 const AdminAuth=async(req,res,next)=>{
     try{
         const token= req.header('Authorization').replace('Bearer ','')
-        const decoded= jwt.verify(token,'seckey')
+        const decoded= jwt.verify(token,process.env.JWTSEC)
         const admin = await Admin.findOne({_id:decoded._id,'tokens.token':token})
         if(!admin){
             throw new Error()

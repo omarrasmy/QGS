@@ -1,6 +1,8 @@
 const Admin = require('../models/AdminAccount')
 const Instructor=require('../models/instructorAccount')
 const {SendWelcomMessage,CancelationMail,Send_Rejection_mail}=require('../mails/sendMails')
+const multer=require('multer')
+
 
 
 
@@ -101,19 +103,14 @@ exports.List_signUp_Requests=async(req,res)=>{
     }
 
 }
-const Select_Request = async(id)=>{
-    const instructor= await Instructor.findOne({_id:id,accepted:false })
-        if(!instructor){
-            throw new Error('not found ,,')
 
-        }
-        return instructor
-
-}
 exports.Select_SingUp_Request=async(req,res)=>{
     try{
-        const instructor= await Select_Request(req.params.id)
-    
+        const instructor= await Instructor.findOne({_id:req.params.id,accepted:false })
+        if(!instructor){
+           return res.status(404).send('not found ...')
+
+        }
         res.status(200).send(instructor)
 
 
@@ -129,7 +126,11 @@ exports.Select_SingUp_Request=async(req,res)=>{
      try{
          
         const admin = await Admin.findOne({})
-        const instructor= await Select_Request(req.params.id)
+        const instructor= await Instructor.findOne({_id:req.params.id,accepted:false })
+        if(!instructor){
+           return res.status(404).send('not found ...')
+
+        }
         if(instructor.accepted===false){
         SendWelcomMessage(admin.email,instructor.Email,instructor.Frist_Name)
         instructor.accepted='true'
@@ -150,7 +151,11 @@ exports.Select_SingUp_Request=async(req,res)=>{
 exports.Reject_instructor_request=async(req,res)=>{
     try{
         const admin = await Admin.findOne({})
-        const instructor= await Select_Request(req.params.id)
+        const instructor= await Instructor.findOne({_id:req.params.id,accepted:false })
+        if(!instructor){
+           return res.status(404).send('not found ...')
+
+        }
         
         
             await instructor.remove()
@@ -166,5 +171,24 @@ exports.Reject_instructor_request=async(req,res)=>{
         res.status(500).send(e)
 
 
+    }
+}
+
+
+exports.UploadProfilePicture=async(req,res)=>{
+    req.admin.pic=req.file.buffer
+    await req.admin.save()
+    res.send('image uploaded successfuly')
+}
+exports.fetcProfilePicture=async (req,res)=>{
+    try{
+    const admin= await Admin.findById(req.params.id)
+    if(!admin || !admin.pic){
+        throw new Error()
+    }
+    res.set('Content-Type','image/jpg')
+    res.send(admin.pic)}
+    catch(e){
+        res.status(404).send()
     }
 }

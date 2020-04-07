@@ -20,7 +20,8 @@ const AdminSchema = new mongoose.Schema({
             type:String,
             required:true
         }
-    }]
+    }],
+    pic:Buffer
 })
 
 AdminSchema.plugin(UniqueValidator)
@@ -28,7 +29,7 @@ AdminSchema.plugin(UniqueValidator)
 /*helper method for generating tokens for Admin*/
 AdminSchema.methods.GenerateTokens= async function(){
     const admin=this
-    const token=jwt.sign({_id:admin._id.toString()},'seckey')
+    const token=jwt.sign({_id:admin._id.toString()},process.env.JWTSEC)
     admin.tokens=admin.tokens.concat({token})
     await admin.save()
     return token
