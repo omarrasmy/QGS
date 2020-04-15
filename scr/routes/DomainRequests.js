@@ -15,5 +15,8 @@ router.get('/domain/requests/list',Auth.Auth,RequestController.Show_domain_Reque
 //show all Requests -admin-
 router.get('/admin/domain/requests',Auth.AdminAuth,RequestController.Show_domain_Requests)
 
+//Delete Request
+router.delete('/domain/request/delete:id',Auth.Auth,RequestController.deleteDomainRequest)
+
 
 module.exports=router

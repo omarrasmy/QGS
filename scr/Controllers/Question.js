@@ -67,10 +67,15 @@ exports.DeleteQuestion=async(req,res)=>{
 
         }
         if(question.kind==='T/F'||'MCQ'){
-            const distructor=await Distructor.deleteMany({Question_id:question._id})
-            if(!distructor){
-              return  res.status(404).send('Not found')}
-             await question.remove()
+         console.log(question.distructor)
+        
+        for (let index = 0; index < question.distructor.length; index++) {
+            await  DistructorController.removeFromDistructor(question._id,question.distructor[index])
+
+            
+        }
+            await question.remove()
+
             return res.status(200).send(question)
         }
     }
@@ -92,7 +97,7 @@ exports.Add_Question_Manually= async(req,res)=>{
         // Adding Distructors 
         const Array_of_distructors=[]
         const Add_Distructors=async()=>{
-            const dis=req.body.di
+            const dis=req.body.add_distructors
             for (i = 0; i < 3; i++) {
                 const distructor =await DistructorController.addDistructor(dis[i])
                  Array_of_distructors.push(distructor)
@@ -103,7 +108,7 @@ exports.Add_Question_Manually= async(req,res)=>{
         // filling mcq Question Object
           const mcq= new MCQ({
             ...req.body,
-            distructors: await Add_Distructors(),
+            distructor: await Add_Distructors(),
             time:Date.now(),
             owner:req.instructor._id,
             domain
@@ -111,13 +116,24 @@ exports.Add_Question_Manually= async(req,res)=>{
         })
         // saving question in database
            await mcq.save()
+
             // Linking distructors to that question
             Array_of_distructors.forEach((d)=>{
             DistructorController.LinkDistructorToQuestion(d,mcq._id)})
-            const Distructors=req.body.di
-           
+            
+           // retrun question after populating it
+           const m = await MCQ.findOne({_id:mcq.id}).populate({
+               path:'domain',
+               select:'domain_name'
+           }).populate({
+               path:'owner',
+               select:'Email'
+           }).populate({
+               path:'distructors',
+               select:'distructor'
+           })
 
-           return res.status(201).send({mcq,Distructors})
+           return res.status(201).send(m)
             }
      if(Type_of_Question==='complete'){
 
@@ -134,7 +150,7 @@ exports.Add_Question_Manually= async(req,res)=>{
 
                 const question= new TrueOrFalse({
                     ...req.body,
-                    distructor: await DistructorController.addDistructor(req.body.dis),
+                    distructor: await DistructorController.addDistructor(req.body.add_distructor),
                     time:Date.now(),
                     owner:req.instructor._id,
                     domain
@@ -142,8 +158,18 @@ exports.Add_Question_Manually= async(req,res)=>{
                 })
                 await question.save()
                 await DistructorController.LinkDistructorToQuestion(question.distructor,question._id)
-            //  const distructor=req.body.dis
-             return  res.status(201).send(question)}        
+            // retrun question after populating it
+           const m = await TrueOrFalse.findOne({_id:question._id}).populate({
+            path:'domain',
+            select:'domain_name'
+        }).populate({
+            path:'owner',
+            select:'Email'
+        }).populate({
+            path:'distructor',
+            select:'distructor'
+        })
+             return  res.status(201).send(m)}        
 }catch(e){
     console.log(e)
     res.status(500).send(e)}} 

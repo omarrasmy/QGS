@@ -40,6 +40,8 @@ const AdminAuth=async(req,res,next)=>{
 
     }
 }
-module.exports.Auth=Auth
-module.exports.AdminAuth=AdminAuth
+module.exports={
+    Auth,
+    AdminAuth,
+}
   

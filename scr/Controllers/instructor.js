@@ -1,6 +1,8 @@
 const Instructor = require('../models/instructorAccount')
 const {CancelationMail}=require('../mails/sendMails')
 const multer=require('multer')
+const bcrypt = require('bcrypt');
+const Request=require('../models/DomainRequests')
 
 
 
@@ -126,3 +128,53 @@ exports.Send_SingnUp_Request= async(req,res)=>{
     }
 
 }
+
+
+exports.editInstructorProfile=async(req,res)=>
+{
+    const oldPassword=req.params.password
+    const hashed=req.instructor.Password
+    const allowed=['Email','Password','Age','Frist_Name','Address','Last_Name']
+    const updates=Object.keys(req.body)
+    console.log(updates)
+    const isMatch=await bcrypt.compare(oldPassword,hashed)
+    if(!isMatch){
+      return res.status(401).send('please enter your password correctly')
+    }
+    const IsValid=updates.every((d)=>{
+         allowed.includes(d)
+
+        })
+    if(!IsValid){
+         return res.status(401).send({error:'Not exisited properity'})}
+    try{
+        updates.forEach((update)=> req.instructor[update]=req.body[update])
+        await req.instructor.save()
+        const instructor=req.instructor
+        res.send(instructor)
+  }catch(e){
+     res.status(400).send(e)}
+    }  
+
+    exports.x=async(id)=>{
+        const requests= await Request.find({})
+        if(requests.length===0){
+            throw new Error('no reqs')
+        }
+        // console.log(requests)
+        var arr=[]
+        var re=[]
+     const is= requests.forEach((r)=>{
+            if(r.voters.includes(id)){
+                arr= r.voters
+            //    console.log(arr)
+             re=arr.filter(e=>e!=id)
+             console.log(re)
+            }
+            
+        })
+       
+       
+     
+    }
+

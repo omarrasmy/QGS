@@ -12,7 +12,7 @@ const QuestionSchema = new mongoose.Schema({
         type:String,
         required:true,
         trim:true,
-        unique:true
+        
     },
     owner:{
         type:mongoose.Schema.Types.ObjectId,
@@ -39,15 +39,9 @@ QuestionSchema.methods.toJSON=function(){
     
   
     delete QuestionObject.__v
-    // delete QuestionObject.kind
-    // delete QuestionObject.time
-    // delete QuestionObject.Level
-    // delete QuestionObject.keyword
-    // delete QuestionObject.distructors
-    // delete QuestionObject.distructor
-    // delete QuestionObject.state
-    // delete QuestionObject.owner._id
-    // delete QuestionObject.public
+   delete QuestionObject.owner._id
+     delete QuestionObject.domain._id
+    
     
     return QuestionObject
 }

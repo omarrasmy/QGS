@@ -4,6 +4,9 @@ const uniqueValidator = require('mongoose-unique-validator')
 const validateInteger = require('mongoose-integer')
 const jwt=require('jsonwebtoken')
 const bcrypt = require('bcrypt');
+const Exam= require('./Exam')
+const Request=require('./DomainRequests')
+
 
 const InstructorSchema =new mongoose.Schema(
     {
@@ -16,7 +19,6 @@ const InstructorSchema =new mongoose.Schema(
         }, 
         Password:{
             type:String,
-            required:true,
             trim:true,
             minlength:6,
             validate(value){
@@ -65,7 +67,13 @@ const InstructorSchema =new mongoose.Schema(
                     type:String,
                     required:true
                 }
-            }]
+            }],
+            requests:[
+                {
+                    type:mongoose.Schema.Types.ObjectId,
+                    ref:'Request'
+                }
+            ]
 
 })
 InstructorSchema.plugin(uniqueValidator)
@@ -112,6 +120,42 @@ InstructorSchema.pre('save',async function(next){
         instructor.Password=await bcrypt.hash(instructor.Password,8)
     }
     next()
+})
+InstructorSchema.pre('remove',async function(next){
+    const instructor=this
+    const id= instructor._id
+    await Exam.deleteMany({owner:id})
+    // handel req
+    // const requests= await Request.find({})
+    // if(requests.length===0){
+    //     throw new Error('no reqs')
+    // }
+    // // console.log(requests)
+    // var arr=[]
+    // var re=[]
+    // const is= requests.forEach((r)=>{
+    //     if(r.voters.includes(id)){
+    //         arr= r.voters
+            
+    //     //    console.log(arr)
+    //      re=arr.filter(e=>e!=id)
+    //      console.log(re)
+    //      r.voters=re
+    //      r.votes--
+       
+    //     }
+    //     is.save()
+        
+    // })
+   
+    
+  
+        
+    
+
+    
+next()
+
 })
 
 const Instructor = mongoose.model('Instructor',InstructorSchema)

@@ -1,10 +1,21 @@
 const Admin = require('../models/AdminAccount')
 const Instructor=require('../models/instructorAccount')
-const {SendWelcomMessage,CancelationMail,Send_Rejection_mail}=require('../mails/sendMails')
-const multer=require('multer')
+const {SendWelcomMessage,Send_Rejection_mail}=require('../mails/sendMails')
+const bcrypt=require('bcrypt')
 
+exports.getAdminEmail= async()=>{
+    try{
+        const admin= await Admin.find({})
+        if(!admin){
+            throw new Error('No Admin')
+        }
+        return admin.email
 
+    }catch(e){
+        console.log(e)
+    }
 
+}
 
 exports.SingUp=async(req,res)=>{
     try{
@@ -74,9 +85,15 @@ exports.LogOutFromAllDevices=async(req,res)=>{
 
 exports.editAdminProfile=async(req,res)=>
 {
+    const isMatch=await bcrypt.compare(req.params.password,req.admin.password)
+    if(!isMatch){
+      return  res.status(401).send('please enter your password correctly')
+    }
+
     const allowed=['email','password']
     const updates=Object.keys(req.body)
     const IsValidUpdate=updates.every((update)=>allowed.includes(update))
+    console.log(IsValidUpdate)
     if(!IsValidUpdate){
         res.status(400).send({error:'Not exisited properity'})
     }try{
@@ -132,10 +149,14 @@ exports.Select_SingUp_Request=async(req,res)=>{
 
         }
         if(instructor.accepted===false){
-        SendWelcomMessage(admin.email,instructor.Email,instructor.Frist_Name)
+          
+         const pass= instructor.Password= randomString(7)
+         console.log(pass)
+          
+        SendWelcomMessage(admin.email,instructor.Email,instructor.Frist_Name,pass)
         instructor.accepted='true'
         instructor.save()
-        return res.status(201).send({instructor})
+        return res.status(201).send('added successfuly')
         }
         res.status(400).send('already added')
 
@@ -148,6 +169,9 @@ exports.Select_SingUp_Request=async(req,res)=>{
 
 
  }
+ function randomString(length) {
+    return Math.round((Math.pow(36, length + 1) - Math.random() * Math.pow(36, length))).toString(36).slice(1);
+}
 exports.Reject_instructor_request=async(req,res)=>{
     try{
         const admin = await Admin.findOne({})
@@ -159,7 +183,7 @@ exports.Reject_instructor_request=async(req,res)=>{
         
         
             await instructor.remove()
-            Send_Rejection_mail(admin.email,instructor.Email)
+            Send_Rejection_mail(admin.email,instructor.Email , instructor.Frist_Name)
 
             res.send('rejection mail is sent')
             
@@ -190,5 +214,36 @@ exports.fetcProfilePicture=async (req,res)=>{
     res.send(admin.pic)}
     catch(e){
         res.status(404).send()
+    }
+}
+exports.List_instructors= async(req,res)=>{
+    try{
+        const instructors= await Instructor.find({accepted:true})
+        if(instructors.length===0){
+           return res.status(404).send('No instructors to show')
+        }
+        res.status(200).send(instructors)
+
+    }catch(e){
+        console.log(e)
+        res.status(500).send(e)
+    }
+}
+// Delete profile pic 
+exports.deleteProfilepic=async(req,res)=>{
+    try{
+        console.log(req.admin)
+        if(!req.admin.pic){
+            throw new Error()
+        }
+        req.admin.pic.delete()
+       await req.admin.save()
+       res.status(200).send('your profile picture is deleted')
+
+        
+
+    }catch(e){
+        console.log(e)
+        res.status(500).send(e)
     }
 }

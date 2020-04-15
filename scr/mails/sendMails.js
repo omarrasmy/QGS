@@ -1,61 +1,70 @@
-const sgMail =require('@sendgrid/mail')
 
-// sgMail.setApiKey(process.env.SENDGRID_API_KEY)
-sgMail.setApiKey(process.env.API_KEY_MAIL)
+const nodemailer = require('nodemailer');
 
-const SendWelcomMessage=(sender,receiver,Frist_Name)=>{
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'quizli8@gmail.com',
+    pass: 'nodejs123456789'
+  }
+});
 
-    const mail={
-        to:receiver,
-        from:sender,
-        subject:`welcom ${Frist_Name}`,
-        text: `Thank You for joining Quizlii Site ! you can now use your email and pass to use our site  `
+const SendWelcomMessage=(sender,receiver,Frist_Name,password)=>{
 
+    var mailOptions = {
+        from: sender,
+        to: receiver,
+        subject: 'Quizili Account',
+        text: `congratulations ${Frist_Name} ,Login to your new account by using Email:${receiver} and pass:${password}`
+      }
+      
+      transporter.sendMail(mailOptions,(error)=>{
+        if (error) {
+          console.log(error);
+        } else {
+          console.log('Email sent');
+        }
+})
+}
+
+ const Send_Rejection_mail=(sender,recevier , Frist_Name)=>{
+  var mailOptions = {
+    from: sender,
+    to: recevier,
+    subject: 'Quizili Account',
+    text: `Sorry ${Frist_Name}, Quizili is concerned with instructors only and your data  does not prove that you are a real one `
+  }
+  
+  transporter.sendMail(mailOptions,(error)=>{
+    if (error) {
+      console.log(error);
+    } else {
+      console.log('Email sent');
     }
-    sgMail.send(mail)
+})
+  
+    }
+    
+const CancelationMail=( recevier ,Frist_Name)=>{
+  var mailOptions = {
+   
+    to: recevier,
+    subject: 'Quizili Account',
+    text: `Hey ${Frist_Name}, why you did that .. give us your feedback to upgrade Quizili `
+  }
+  
+  transporter.sendMail(mailOptions,(error)=>{
+    if (error) {
+      console.log(error);
+    } else {
+      console.log('Email sent');
+    }
+})
 
 }
-const CancelationMail=(Email,Frist_Name)=>{
-    const mail={
-        to:Email,
-        from:'radwayasser90@gmail.com',
-        subject:`Heyy ${Frist_Name} ! `,
-        text:'why u did this .. Give us your feedback'
-
-    }
-
-    sgMail.send(mail)
-
-}
- const SendFeedBack=(sender,recevier,feedback)=>{
- const mail={
-     to:recevier,
-     from:sender,
-     subject:`New feedback From ${sender}`,
-     text:feedback
- }
-
-
-  sgMail.send(mail)
- }
- const Send_Rejection_mail=(sender,recevier)=>{
-    const mail={
-        to:recevier,
-        from:sender,
-        subject:`from ${sender} -rejection mail-`,
-        text:`sorry ${recevier} , but we think you are not real instructor `
-    }
-   
-   
-     sgMail.send(mail)
-    }
-   
-
-
-
 module.exports={
 SendWelcomMessage,
 CancelationMail,
-SendFeedBack,
+
 Send_Rejection_mail
 }

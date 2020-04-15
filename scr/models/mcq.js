@@ -5,9 +5,11 @@ const options = {discriminatorKey: 'kind'}
 
 const MCQ = Question.discriminator('MCQ',new mongoose.Schema({
     keyword: { type: String, required: true },
-    distructors: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Distructor' }]
+    distructor: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Distructor' }]
 
 },options))
+
+
 
 
   module.exports= MCQ

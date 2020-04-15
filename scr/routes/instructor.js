@@ -34,6 +34,10 @@ router.get('/instructor/me',Auth.Auth,instructorController.ReadProfile)
   //fetch pic on web 
 router.get('/instructor/:id/pic',instructorController.fetcProfilePicture)
 
+router.patch('/instructor/editme:password',Auth.Auth,instructorController.editInstructorProfile)
+
+
+
 
 
  

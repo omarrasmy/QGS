@@ -8,7 +8,6 @@ const InstructorRoutes=require('./scr/routes/instructor')
 const AdminRoutes=require('./scr/routes/Admin')
 const DomainRouts=require('./scr/routes/domain')
 const ExamRoutes=require('./scr/routes/Exam')
-const QBRoutes=require('./scr/routes/QB')
 const distructorRoutes= require('./scr/routes/distructor')
 const QuestionRoutes=require('./scr/routes/Question')
 const FeedbackRoutes=require('./scr/routes/Feedback')
@@ -23,7 +22,6 @@ app.use(InstructorRoutes)
 app.use(AdminRoutes)
 app.use(DomainRouts)
 app.use(ExamRoutes)
-app.use(QBRoutes)
 app.use(distructorRoutes)
 app.use(QuestionRoutes)
 app.use(FeedbackRoutes)
@@ -50,12 +48,13 @@ app.use(RequestRoutes)
 
 // fun()
 
-// const questioncontroller= require('./scr/Controllers/Question')
+// const instructorcontroller= require('./scr/Controllers/instructor')
 // const fun=async()=>{
-//     const Question=await questioncontroller.(['5e8492e760f56f13b027eb0b','5e8492b260f56f13b027eb09'])
-//     return Question
+//     const instructor=await instructorcontroller.x('5e95bbb90df34042e8541250')
+//     return instructor
     
 // }
+// fun()
 // const funn=async()=>{
 //     const Question=await questioncontroller.Select_Questions(['5e8492e760f56f13b027eb0b','5e8492b260f56f13b027eb09'])
 
@@ -73,4 +72,6 @@ app.use(RequestRoutes)
 app.listen(port,()=>{
     console.log('App is listening on port '+ port)
 })
+
+
 

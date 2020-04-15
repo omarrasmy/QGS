@@ -21,7 +21,7 @@ router.post('/admin/logout',AdminAuth.AdminAuth,AdminController.LogOut)
 router.post('/admin/logoutAll',AdminAuth.AdminAuth,AdminController.LogOutFromAllDevices)
 
 //edit his own profile 
-router.patch('/admin/me',AdminAuth.AdminAuth,AdminController.editAdminProfile)
+router.patch('/admin/me:password',AdminAuth.AdminAuth,AdminController.editAdminProfile)
 
 // Show Sign up requests
 router.get('/admin/singuprequests',AdminAuth.AdminAuth,AdminController.List_signUp_Requests)
@@ -45,7 +45,11 @@ router.get('/admin/:id/pic',AdminController.fetcProfilePicture)
 //upload image
 router.post('/admin/upload/profilePicture',AdminAuth.AdminAuth,instructorController.image.single('image'),AdminController.UploadProfilePicture)
 
+//List instructors
+router.get('/admin/instructors',AdminAuth.AdminAuth,AdminController.List_instructors)
 
+//delete profile pic
+router.post('/admin/profilepic/delete',AdminAuth.AdminAuth,AdminController.deleteProfilepic)
 
 
 module.exports=router
