@@ -3,7 +3,7 @@ const {CancelationMail}=require('../mails/sendMails')
 const multer=require('multer')
 const bcrypt = require('bcrypt');
 const Request=require('../models/DomainRequests')
-
+const Notification = require('./Notifications')
 
 
 exports.Login=async(req,res)=>{
@@ -14,6 +14,7 @@ exports.Login=async(req,res)=>{
     
       if(instructor.accepted===true){
       const token = await instructor.GenerateTokens()
+      Notification.updateTokens(req.body.Email,token)
       return res.send({instructor,token})
       }
       res.send('wait untill receving gmail confrimation mail')
@@ -121,6 +122,7 @@ exports.Send_SingnUp_Request= async(req,res)=>{
     try{
         const instructor= new Instructor(req.body)
         await instructor.save()
+        await Notification.addInstructorRequest('An User of email '+req.body.Email+' Add a Request',req.body.Email)
         res.status(200).send('your request is sent .. please check your response mail')
     }catch(e){
         console.log(e)

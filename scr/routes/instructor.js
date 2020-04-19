@@ -2,7 +2,7 @@ const express = require('express')
 const Auth=require('../middleware/Auth')
 const instructorController=require('../Controllers/instructor')
 const router = new express.Router()
-
+const Notify=require('../middleware/Notify')
 
 // send Account request 
 router.post('/',instructorController.Send_SingnUp_Request)
@@ -11,30 +11,30 @@ router.post('/',instructorController.Send_SingnUp_Request)
 router.post('/instructor/login',instructorController.Login)  
 
 //upload resources
-router.post('/upload/resources',Auth.Auth,instructorController.resource.single('resource'),instructorController.enterResources)
+router.post('/upload/resources',Auth.Auth,Notify.GetNumberOfNotification,instructorController.resource.single('resource'),instructorController.enterResources)
 
 
 //upload image
-router.post('/upload/profilePicture',Auth.Auth,instructorController.image.single('image'),instructorController.UploadProfilePicture)
+router.post('/upload/profilePicture',Auth.Auth,Notify.GetNumberOfNotification,instructorController.image.single('image'),instructorController.UploadProfilePicture)
 
 // read his profile
-router.get('/instructor/me',Auth.Auth,instructorController.ReadProfile)
+router.get('/instructor/me',Auth.Auth,Notify.GetNumberOfNotification,instructorController.ReadProfile)
 
 // Delete  his own account 
- router.delete('/instructor/delete',Auth.Auth,instructorController.deleteAccount)
+ router.delete('/instructor/delete',Auth.Auth,Notify.GetNumberOfNotification,instructorController.deleteAccount)
 
  //send feedback to Admin -done look at feedback route-
 
  //logout 
- router.post('/instructor/logout',Auth.Auth,instructorController.Logout)
+ router.post('/instructor/logout',Auth.Auth,Notify.GetNumberOfNotification,instructorController.Logout)
 
  //logout from all devices
-  router.post('/instructor/logoutfromall',Auth.Auth,instructorController.logoutFromAllDevices)
+  router.post('/instructor/logoutfromall',Auth.Auth,Notify.GetNumberOfNotification,instructorController.logoutFromAllDevices)
 
   //fetch pic on web 
 router.get('/instructor/:id/pic',instructorController.fetcProfilePicture)
 
-router.patch('/instructor/editme:password',Auth.Auth,instructorController.editInstructorProfile)
+router.patch('/instructor/editme:password',Auth.Auth,Notify.GetNumberOfNotification,instructorController.editInstructorProfile)
 
 
 

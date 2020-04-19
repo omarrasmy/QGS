@@ -1,10 +1,11 @@
 require('./scr/db-con/mongoose')
+require('dotenv').config({path:'./configurations/dev.env'})
+const path = require("path");
 
 
 const express=require('express')
 const app=express()
 
-const InstructorRoutes=require('./scr/routes/instructor')
 const AdminRoutes=require('./scr/routes/Admin')
 const DomainRouts=require('./scr/routes/domain')
 const ExamRoutes=require('./scr/routes/Exam')
@@ -12,12 +13,15 @@ const distructorRoutes= require('./scr/routes/distructor')
 const QuestionRoutes=require('./scr/routes/Question')
 const FeedbackRoutes=require('./scr/routes/Feedback')
 const RequestRoutes=require('./scr/routes/DomainRequests')
-
+const Not = require('./scr/routes/Notification')
 
 const port=process.env.PORT
+const InstructorRoutes=require('./scr/routes/instructor')
 
+app.use(express.static(path.join(__dirname, "JavaScript")));
 app.use(express.json())
 
+app.use(Not)
 app.use(InstructorRoutes)
 app.use(AdminRoutes)
 app.use(DomainRouts)
@@ -26,7 +30,6 @@ app.use(distructorRoutes)
 app.use(QuestionRoutes)
 app.use(FeedbackRoutes)
 app.use(RequestRoutes)
-
 
 
 

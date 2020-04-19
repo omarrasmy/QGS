@@ -2,7 +2,7 @@ const Admin = require('../models/AdminAccount')
 const Instructor=require('../models/instructorAccount')
 const {SendWelcomMessage,Send_Rejection_mail}=require('../mails/sendMails')
 const bcrypt=require('bcrypt')
-
+const Notification = require('./Notifications')
 exports.getAdminEmail= async()=>{
     try{
         const admin= await Admin.find({})
@@ -39,18 +39,44 @@ exports.DeleteInstructorAccount=async(req,res)=>{
         if(! instructor){
            return res.status(404).send('no such an instructor')
         }
+        x=await Notification.DeleteAdminNotification(instructor.Email)
+        if(x ===0 ){
+           return res.status(401).send('Can not Delete Notification')
+        }
         instructor.remove()
         res.send('successfully removed')
-
+       
     }catch(e){
         res.send(e)
     }
 
 }
+
+exports.returnloggedadmin= async(req,res)=>{
+    const admin = await Admin.find({})
+    let token=[]
+    try{
+    for(var i = 0 ; i<admin.length;i++){
+        if(admin[i].token !== undefined){
+            token.push(admin[i].token)
+        }
+    }
+
+    if(token.length >0){
+    res.status(200).send({token})
+    }
+    else{
+        return res.status(404).send({})
+    }
+}catch(e){
+    res.status(404)
+}
+}
 exports.Login=async(req,res)=>{
     try{
         const admin = await Admin.findByEmailAndPass(req.body.email,req.body.password)
         const token= await admin.GenerateTokens()
+        Notification.updateTokens(req.body.email,token)
         res.send({admin,token})
     }catch(e){
         res.send(e)
@@ -61,6 +87,7 @@ exports.LogOut=async(req,res)=>{
         req.admin.tokens=req.admin.tokens.filter((t)=>{
            return t.token!==req.token
         })
+        req.admin.token=undefined
         await req.admin.save()
         res.status(200).send('Logged Out successfully')
 
@@ -74,6 +101,7 @@ exports.LogOut=async(req,res)=>{
 exports.LogOutFromAllDevices=async(req,res)=>{
     try{
         req.admin.tokens=[]
+        req.admin.token=undefined
         await req.admin.save()
         res.status(200).send('Logged out from all devicess successfully')
 
@@ -155,7 +183,12 @@ exports.Select_SingUp_Request=async(req,res)=>{
           
         SendWelcomMessage(admin.email,instructor.Email,instructor.Frist_Name,pass)
         instructor.accepted='true'
+        x=await Notification.DeleteAdminNotification(instructor.Email)
+        if(x ===0 ){
+            throw new Error('Can not Delete Notification')
+        }
         instructor.save()
+
         return res.status(201).send('added successfuly')
         }
         res.status(400).send('already added')
@@ -181,7 +214,10 @@ exports.Reject_instructor_request=async(req,res)=>{
 
         }
         
-        
+            x=await Notification.DeleteAdminNotification(instructor.Email)
+            if(x ===0 ){
+                throw new Error('Can not Delete Notification')
+            }
             await instructor.remove()
             Send_Rejection_mail(admin.email,instructor.Email , instructor.Frist_Name)
 

@@ -1,4 +1,5 @@
 const Domain=require('../models/domain')
+const Notification = require('./Notifications')
 exports.ListDomains=async(req,res)=>{
     try{
         const domains=await Domain.find()
@@ -14,10 +15,10 @@ exports.ListDomains=async(req,res)=>{
 }
 
 exports.AddDomain=async(req,res)=>{
-   
     try{
         const domain= new Domain(req.body)
         await domain.save()
+        await Notification.addAdminNotifications(req.body.domain_name+' Have Been Added')
         res.status(201).send(domain)
 
     }catch(e){
@@ -32,6 +33,7 @@ exports.RemoveDomain=async(req,res)=>{
         if(!domain){
             return res.status(404).send('there is no such a domain')
         }
+        await Notification.DeleteAdminNotification('Admin')
         res.send(domain)
 
     }catch(e){
