@@ -236,24 +236,38 @@ exports.get_Questions=async(ids)=>{
 
 }
 //retrun all questions in questionbank
-exports.get_question_bank=async(req,res)=>{
-    try{
-        const domain=req.params.domain_id
-      
-        const QB = await Question.find({public:true,domain:domain}).populate({
-            path:'owner',
-            select:'Email'
-        }).populate({
-            path:'domain',
-            select:'domain_name'
+exports.get_question_bank = async (req, res) => {
+    try {
+        const domain = req.params.domain_id
+        let QB;
+        if (domain === 'all') {
+             QB = await Question.find({ public: true }).populate({
+                path: 'domain',
+                select: 'domain_name'
 
-        })
-        if(QB.length===0){
+            })
+        }
+        else {
+            
+
+             QB = await Question.find({ public: true, domain: domain }).populate({
+                path: 'owner',
+                select: 'Email'
+            }).populate({
+                path: 'domain',
+                select: 'domain_name'
+
+            })
+        }
+        if (QB.length === 0) {
+            console.log('wrong')
             res.status(404).send('No Questions in QB')
         }
+        console.log(QB)
         res.status(200).send(QB)
 
-    }catch(e){
+    } catch (e) {
+        console.log(e)
         res.status(500).send(e)
 
     }

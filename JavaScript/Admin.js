@@ -1,5 +1,3 @@
-console.log('in')
-
 require('dotenv').config({path:'../configurations/dev.env'})
 
 const publicVapidKey =process.env.publicVapidKey

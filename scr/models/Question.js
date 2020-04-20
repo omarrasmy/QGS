@@ -17,7 +17,7 @@ const QuestionSchema = new mongoose.Schema({
     owner:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'Instructor',
-        required:true
+        required:false
 
     },time: Date,
     public:{
@@ -39,7 +39,7 @@ QuestionSchema.methods.toJSON=function(){
     
   
     delete QuestionObject.__v
-   delete QuestionObject.owner._id
+//    delete QuestionObject.owner._id
      delete QuestionObject.domain._id
     
     

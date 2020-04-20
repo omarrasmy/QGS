@@ -5,7 +5,7 @@ const router = new express.Router()
 const Notify=require('../middleware/Notify')
 
 // send Account request 
-router.post('/',instructorController.Send_SingnUp_Request)
+router.post('/instructor/signup',instructorController.Send_SingnUp_Request)
 
 //Login 
 router.post('/instructor/login',instructorController.Login)  

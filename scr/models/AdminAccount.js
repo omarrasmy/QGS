@@ -15,16 +15,19 @@ const AdminSchema = new mongoose.Schema({
         trim:true,
 
     },
+    token:{
+        type:String
+    },
+    
     tokens:[{
         token:{
             type:String,
             required:true
         }
     }],
-    pic:Buffer,
-    token:{
-        type:String
-    }
+    
+    
+    pic:Buffer
 })
 
 AdminSchema.plugin(UniqueValidator)

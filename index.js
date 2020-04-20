@@ -1,22 +1,25 @@
 require('./scr/db-con/mongoose')
-require('dotenv').config({path:'./configurations/dev.env'})
+require('dotenv').config({ path: './configurations/dev.env' })
 const path = require("path");
 
 
-const express=require('express')
-const app=express()
+const express = require('express')
+const app = express()
+var http = require('http').createServer(app);
+const io = require('socket.io')(http);
 
-const AdminRoutes=require('./scr/routes/Admin')
-const DomainRouts=require('./scr/routes/domain')
-const ExamRoutes=require('./scr/routes/Exam')
-const distructorRoutes= require('./scr/routes/distructor')
-const QuestionRoutes=require('./scr/routes/Question')
-const FeedbackRoutes=require('./scr/routes/Feedback')
-const RequestRoutes=require('./scr/routes/DomainRequests')
+
+const AdminRoutes = require('./scr/routes/Admin')
+const DomainRouts = require('./scr/routes/domain')
+const ExamRoutes = require('./scr/routes/Exam')
+const distructorRoutes = require('./scr/routes/distructor')
+const QuestionRoutes = require('./scr/routes/Question')
+const FeedbackRoutes = require('./scr/routes/Feedback')
+const RequestRoutes = require('./scr/routes/DomainRequests')
 const Not = require('./scr/routes/Notification')
 
-const port=process.env.PORT
-const InstructorRoutes=require('./scr/routes/instructor')
+const port = process.env.PORT
+const InstructorRoutes = require('./scr/routes/instructor')
 
 app.use(express.static(path.join(__dirname, "JavaScript")));
 app.use(express.json())
@@ -37,7 +40,7 @@ app.use(RequestRoutes)
 // const fun=async()=>{
 //     const new_id =await DistructorController.Edit_distructor('5e72aa0e8ce61a310810181d','un')
 //     console.log(new_id)
-    
+
 // }
 // fun()
 
@@ -55,7 +58,7 @@ app.use(RequestRoutes)
 // const fun=async()=>{
 //     const instructor=await instructorcontroller.x('5e95bbb90df34042e8541250')
 //     return instructor
-    
+
 // }
 // fun()
 // const funn=async()=>{
@@ -67,14 +70,33 @@ app.use(RequestRoutes)
 // funn()
 
 
-      
-    
 
-    
 
-app.listen(port,()=>{
-    console.log('App is listening on port '+ port)
-})
+
+
+// Subscribe Route
+
+
+
+
+http.listen(port, function () {
+    console.log("Listening on ", port);
+});
+
+
+
+io.on('connection',function(socket) {
+    console.log("connecting");
+    
+    socket.on('AddRequest', () => {
+        console.log("Emited")
+        io.emit('Send');
+     });
+  });
+
+
+
+
 
 
 

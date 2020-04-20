@@ -3,6 +3,7 @@ const Instructor=require('../models/instructorAccount')
 const {SendWelcomMessage,Send_Rejection_mail}=require('../mails/sendMails')
 const bcrypt=require('bcrypt')
 const Notification = require('./Notifications')
+
 exports.getAdminEmail= async()=>{
     try{
         const admin= await Admin.find({})
@@ -51,7 +52,6 @@ exports.DeleteInstructorAccount=async(req,res)=>{
     }
 
 }
-
 exports.returnloggedadmin= async(req,res)=>{
     const admin = await Admin.find({})
     let token=[]

@@ -15,7 +15,7 @@ router.delete('/domain/:id',AdminAuth.AdminAuth,DomainController.RemoveDomain)
 //edit domain
 router.patch('/domain/edit/:id',AdminAuth.AdminAuth, DomainController.EditDomain)
 //list domains
-router.get('/domain',AdminAuth.AdminAuth,DomainController.ListDomains)
+router.get('/domain',DomainController.ListDomains)
 
 //select domain
 router.get('/domain/select',AdminAuth.Auth,DomainController.SelectDomain)
